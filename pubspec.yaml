@@ -1,0 +1,68 @@
+name: ruang_pribadi
+description: "Aplikasi ALL Role Buat Hepi Hepi."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 3.1.0+31 # add fix bug
+
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  cupertino_icons: ^1.0.8
+  sqflite: ^2.4.1
+  path: ^1.9.0
+  shared_preferences: ^2.0.15
+  provider: ^6.0.0
+  path_provider: ^2.1.5
+  intl: ^0.18.0
+  http: ^1.2.0
+  fl_chart: ^0.68.0
+  flutter_secure_storage: ^9.0.0
+  file_picker: ^11.0.2
+  web_socket_channel: ^3.0.1
+  webview_flutter: ^4.14.1
+  url_launcher: ^6.2.0
+  audioplayers: ^6.8.1
+  flutter_svg: ^2.2.1
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+
+flutter:
+  uses-material-design: true
+  # Windows struktur database
+  assets:
+    - assets\database\data.db
+    - assets\sounds\tick.wav
+    - assets\images\peg.svg
+    - assets\plantuml\
+
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets\fonts\roboto\roboto-reguler.ttf
+        - asset: assets\fonts\roboto\roboto-italic.ttf
+
+    - family: Noto_Sans_JP
+      fonts:
+        - asset: assets\fonts\noto_sans_jp\noto-sans-jp.ttf
+# Linux Struktur database
+# assets:
+#   - assets/database/database.db
+
+# fonts:
+#   - family: Roboto
+#     fonts:
+#       - asset: assets/fonts/roboto/roboto-reguler.ttf
+#       - asset: assets/fonts/roboto/roboto-italic.ttf
+
+#   - family: Noto_Sans_JP
+#     fonts:
+#       - asset: assets/fonts/noto_sans_jp/noto-sans-jp.ttf

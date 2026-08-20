@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PlantUML Local Renderer</title>
+</head>
+<body>
+  <!--
+    Renderer PlantUML lokal (TeaVM JS) untuk Flutter WebView.
+    Disajikan via server HTTP lokal (http://127.0.0.1) sehingga
+    ES module import './plantuml.js' bebas CORS.
+    - viz-global.js  : engine Graphviz/Viz.js (wajib untuk layout Dot).
+    - plantuml.js    : engine PlantUML (ES module), export render & renderToString.
+    Dipanggil dari Flutter via window.renderPlantUML(linesJson).
+    Hasil dikirim balik lewat window.PlantUMLBridge.postMessage(...).
+  -->
+  <script src="viz-global.js"></script>
+  <script type="module">
+    import { renderToString } from './plantuml.js';
+
+    window.renderPlantUML = function (arg) {
+      let lines;
+      if (Array.isArray(arg)) {
+        lines = arg;
+      } else {
+        try {
+          lines = JSON.parse(arg);
+        } catch (e) {
+          lines = String(arg).split(/\r\n|\r|\n/);
+        }
+      }
+      renderToString(
+        lines,
+        function (svg) {
+          window.PlantUMLBridge.postMessage(JSON.stringify({ ok: true, svg: svg }));
+        },
+        function (err) {
+          window.PlantUMLBridge.postMessage(JSON.stringify({ ok: false, err: String(err) }));
+        }
+      );
+    };
+  </script>
+</body>
+</html>
