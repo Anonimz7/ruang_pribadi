@@ -1312,8 +1312,8 @@ class _StocksScreenState extends State<StocksScreen> {
 
   Widget _buildSummaryTable(List<dynamic> data) {
     final colors = Theme.of(context).colorScheme;
-    // Show last 15 rows (most recent first)
-    final rows = data.length > 15 ? data.sublist(0, 15) : data;
+    // Show last 15 rows (most recent last, since data is sorted ascending by date)
+    final rows = data.length > 15 ? data.sublist(data.length - 15) : data;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1363,7 +1363,7 @@ class _StocksScreenState extends State<StocksScreen> {
                       style: TextStyle(
                           fontSize: 10, fontWeight: FontWeight.bold))),
             ],
-            rows: rows.map((r) {
+            rows: rows.reversed.map((r) {
               final close = (r['close'] as num?)?.toDouble() ?? 0;
               final prevPrice = (r['prev_price'] as num?)?.toDouble() ?? close;
               final chg =
