@@ -82,19 +82,57 @@ class StockSectorBadge extends StatelessWidget {
 /// Delisted status indicator chip.
 class DelistedBadge extends StatelessWidget {
   final int? labelDelisted;
+  final String? stockStatus;
   final bool small;
 
   const DelistedBadge({
     super.key,
     this.labelDelisted,
+    this.stockStatus,
     this.small = false,
   });
 
   bool get isDelisted => labelDelisted == 1;
+  bool get isBlacklisted => stockStatus == 'blacklist';
 
   @override
   Widget build(BuildContext context) {
     final fontSize = small ? 9.0 : 11.0;
+
+    // Blacklisted
+    if (isBlacklisted) {
+      return Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: small ? 4.0 : 6.0,
+          vertical: small ? 1.0 : 2.0,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.orange.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.warning,
+              size: small ? 10 : 12,
+              color: Colors.orange,
+            ),
+            SizedBox(width: small ? 2 : 4),
+            Text(
+              'Blacklist',
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.w600,
+                color: Colors.orange,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Delisted or Active
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: small ? 4.0 : 6.0,
@@ -176,7 +214,7 @@ class StockInfoCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              DelistedBadge(labelDelisted: stock.labelDelisted),
+              DelistedBadge(labelDelisted: stock.labelDelisted, stockStatus: stock.stockStatus),
             ],
           ),
           const SizedBox(height: 10),

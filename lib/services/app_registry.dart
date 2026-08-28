@@ -14,6 +14,7 @@ import '../settings/sitemaps_screen.dart';
 import '../settings/proxy_settings_screen.dart';
 import '../settings/profile_screen.dart';
 import '../settings/backup_screen.dart';
+import '../settings/admin_stock_status_screen.dart';
 import '../video_downloader/screens/video_downloader_screen.dart';
 import '../gacha_luck/gacha_screen.dart';
 import '../rolling/rolling_screen.dart';
@@ -201,6 +202,13 @@ final List<AppDef> appRegistry = [
     icon: Icons.backup,
     label: 'Backup System',
     builder: (_) => const BackupScreen(),
+    section: 'admin',
+  ),
+  AppDef(
+    key: 'admin_stock_status',
+    icon: Icons.shield,
+    label: 'Status Saham',
+    builder: (_) => const AdminStockStatusScreen(),
     section: 'admin',
   ),
 

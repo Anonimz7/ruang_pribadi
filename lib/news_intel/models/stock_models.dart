@@ -11,6 +11,10 @@ class StockListItem {
   final String? primarySector;
   final String? subSector;
   final int? labelDelisted;
+  final String? stockStatus;
+  final String? statusReason;
+  final String? statusSetBy;
+  final String? statusSetAt;
 
   const StockListItem({
     required this.ticker,
@@ -19,10 +23,17 @@ class StockListItem {
     this.primarySector,
     this.subSector,
     this.labelDelisted,
+    this.stockStatus,
+    this.statusReason,
+    this.statusSetBy,
+    this.statusSetAt,
   });
 
   /// `true` if the stock has been delisted.
   bool get isDelisted => labelDelisted == 1;
+
+  /// `true` if the stock is blacklisted by admin.
+  bool get isBlacklisted => stockStatus == 'blacklist';
 
   factory StockListItem.fromJson(Map<String, dynamic> j) => StockListItem(
         ticker: (j['ticker'] as String?) ?? '',
@@ -31,6 +42,10 @@ class StockListItem {
         primarySector: j['primary_sector'] as String?,
         subSector: j['sub_sector'] as String?,
         labelDelisted: j['label_delisted'] as int?,
+        stockStatus: j['stock_status'] as String?,
+        statusReason: j['status_reason'] as String?,
+        statusSetBy: j['status_set_by'] as String?,
+        statusSetAt: j['status_set_at'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -40,6 +55,10 @@ class StockListItem {
         'primary_sector': primarySector,
         'sub_sector': subSector,
         'label_delisted': labelDelisted,
+        'stock_status': stockStatus,
+        'status_reason': statusReason,
+        'status_set_by': statusSetBy,
+        'status_set_at': statusSetAt,
       };
 }
 
@@ -54,6 +73,10 @@ class StockProfile extends StockListItem {
     super.primarySector,
     super.subSector,
     super.labelDelisted,
+    super.stockStatus,
+    super.statusReason,
+    super.statusSetBy,
+    super.statusSetAt,
     this.coreBusiness,
   });
 
@@ -64,6 +87,10 @@ class StockProfile extends StockListItem {
         primarySector: j['primary_sector'] as String?,
         subSector: j['sub_sector'] as String?,
         labelDelisted: j['label_delisted'] as int?,
+        stockStatus: j['stock_status'] as String?,
+        statusReason: j['status_reason'] as String?,
+        statusSetBy: j['status_set_by'] as String?,
+        statusSetAt: j['status_set_at'] as String?,
         coreBusiness: j['core_business'] as String?,
       );
 }
@@ -205,6 +232,10 @@ class StockAnalysis extends StockProfile {
     super.primarySector,
     super.subSector,
     super.labelDelisted,
+    super.stockStatus,
+    super.statusReason,
+    super.statusSetBy,
+    super.statusSetAt,
     super.coreBusiness,
     required this.periodDays,
     required this.data,
@@ -220,6 +251,10 @@ class StockAnalysis extends StockProfile {
       primarySector: j['primary_sector'] as String?,
       subSector: j['sub_sector'] as String?,
       labelDelisted: j['label_delisted'] as int?,
+      stockStatus: j['stock_status'] as String?,
+      statusReason: j['status_reason'] as String?,
+      statusSetBy: j['status_set_by'] as String?,
+      statusSetAt: j['status_set_at'] as String?,
       coreBusiness: j['core_business'] as String?,
       periodDays: (j['period_days'] as num?)?.toInt() ?? 90,
       data: dataList
@@ -247,4 +282,42 @@ class StockListResponse {
           .toList(),
     );
   }
+}
+
+/// Stock status item for admin blacklist/whitelist management.
+class StockStatusItem {
+  final String ticker;
+  final String companyName;
+  final int? labelDelisted;
+  final String? stockStatus;
+  final String? statusReason;
+  final String? statusSetBy;
+  final String? statusSetAt;
+  final String? sector;
+
+  const StockStatusItem({
+    required this.ticker,
+    required this.companyName,
+    this.labelDelisted,
+    this.stockStatus,
+    this.statusReason,
+    this.statusSetBy,
+    this.statusSetAt,
+    this.sector,
+  });
+
+  bool get isDelisted => labelDelisted == 1;
+  bool get isBlacklisted => stockStatus == 'blacklist';
+  bool get isWhitelisted => stockStatus == 'whitelist';
+
+  factory StockStatusItem.fromJson(Map<String, dynamic> j) => StockStatusItem(
+        ticker: (j['ticker'] as String?) ?? '',
+        companyName: (j['company_name'] as String?) ?? '',
+        labelDelisted: j['label_delisted'] as int?,
+        stockStatus: j['stock_status'] as String?,
+        statusReason: j['status_reason'] as String?,
+        statusSetBy: j['status_set_by'] as String?,
+        statusSetAt: j['status_set_at'] as String?,
+        sector: j['sector'] as String?,
+      );
 }

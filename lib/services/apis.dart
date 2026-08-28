@@ -440,6 +440,40 @@ class AdminApi {
   Future<Map<String, dynamic>> logs(String logType, {int lines = 50}) async =>
       (await _c.get('/admin/logs/$logType', {'lines': '$lines'}))
           as Map<String, dynamic>;
+
+  // ─── Stock Status (Blacklist/Whitelist) ──────────────
+
+  /// [GET /admin/stocks/status?q=&status=] — List all stocks with status
+  Future<List<StockStatusItem>> getStockStatusList({
+    String q = '',
+    String status = '',
+  }) async {
+    final r = await _c.get('/admin/stocks/status', {
+      if (q.isNotEmpty) 'q': q,
+      if (status.isNotEmpty) 'status': status,
+    });
+    final list = r is List ? r : [];
+    return list
+        .map((e) => StockStatusItem.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// [POST /admin/stocks/status] — Set stock blacklist/whitelist
+  Future<Map<String, dynamic>> setStockStatus(
+    String ticker,
+    String status,
+    String reason,
+  ) async =>
+      (await _c.post('/admin/stocks/status', {
+        'ticker': ticker,
+        'status': status,
+        'reason': reason,
+      })) as Map<String, dynamic>;
+
+  /// [DELETE /admin/stocks/status/{ticker}] — Reset stock status
+  Future<Map<String, dynamic>> resetStockStatus(String ticker) async =>
+      (await _c.delete('/admin/stocks/status/$ticker'))
+          as Map<String, dynamic>;
 }
 
 // ─── Backup ─────────────────────────────────────────────────────────────────
