@@ -555,7 +555,7 @@ class _StockListTile extends StatelessWidget {
             ),
             // Delisted badge + chevron
             const SizedBox(width: 8),
-            DelistedBadge(labelDelisted: stock.labelDelisted, stockStatus: stock.stockStatus, small: true),
+            DelistedBadge(labelDelisted: stock.labelDelisted, stockStatus: stock.stockStatus, statusReason: stock.statusReason, small: true),
             if (!stock.isDelisted) ...[
               const SizedBox(width: 4),
               Icon(Icons.chevron_right,

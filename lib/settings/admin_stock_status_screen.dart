@@ -391,6 +391,7 @@ class _AdminStockStatusScreenState extends State<AdminStockStatusScreen> {
             DelistedBadge(
               labelDelisted: stock.labelDelisted,
               stockStatus: stock.stockStatus,
+              statusReason: stock.statusReason,
               small: true,
             ),
             const SizedBox(width: 6),

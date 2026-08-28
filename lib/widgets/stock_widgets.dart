@@ -83,12 +83,14 @@ class StockSectorBadge extends StatelessWidget {
 class DelistedBadge extends StatelessWidget {
   final int? labelDelisted;
   final String? stockStatus;
+  final String? statusReason;
   final bool small;
 
   const DelistedBadge({
     super.key,
     this.labelDelisted,
     this.stockStatus,
+    this.statusReason,
     this.small = false,
   });
 
@@ -101,35 +103,55 @@ class DelistedBadge extends StatelessWidget {
 
     // Blacklisted
     if (isBlacklisted) {
-      return Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: small ? 4.0 : 6.0,
-          vertical: small ? 1.0 : 2.0,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.orange.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.warning,
-              size: small ? 10 : 12,
-              color: Colors.orange,
-            ),
-            SizedBox(width: small ? 2 : 4),
-            Text(
-              'Blacklist',
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w600,
+      final badge = GestureDetector(
+        onTap: (statusReason != null && statusReason!.isNotEmpty)
+            ? () => showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Alasan Blacklist'),
+                    content: SingleChildScrollView(
+                      child: Text(statusReason!),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('Tutup'),
+                      ),
+                    ],
+                  ),
+                )
+            : null,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: small ? 4.0 : 6.0,
+            vertical: small ? 1.0 : 2.0,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.orange.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.warning,
+                size: small ? 10 : 12,
                 color: Colors.orange,
               ),
-            ),
-          ],
+              SizedBox(width: small ? 2 : 4),
+              Text(
+                'Blacklist',
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.orange,
+                ),
+              ),
+            ],
+          ),
         ),
       );
+      return badge;
     }
 
     // Delisted or Active
@@ -214,7 +236,7 @@ class StockInfoCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              DelistedBadge(labelDelisted: stock.labelDelisted, stockStatus: stock.stockStatus),
+              DelistedBadge(labelDelisted: stock.labelDelisted, stockStatus: stock.stockStatus, statusReason: stock.statusReason),
             ],
           ),
           const SizedBox(height: 10),

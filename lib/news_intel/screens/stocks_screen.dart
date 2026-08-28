@@ -421,7 +421,7 @@ class _StocksScreenState extends State<StocksScreen> {
                           if (s.isDelisted) ...[
                             const SizedBox(width: 4),
                             DelistedBadge(
-                                labelDelisted: s.labelDelisted, stockStatus: s.stockStatus, small: true),
+                                labelDelisted: s.labelDelisted, stockStatus: s.stockStatus, statusReason: s.statusReason, small: true),
                           ],
                         ],
                       ),
@@ -466,7 +466,7 @@ class _StocksScreenState extends State<StocksScreen> {
                         style: const TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 8),
-                    DelistedBadge(labelDelisted: _analysis!.labelDelisted, stockStatus: _analysis!.stockStatus),
+                    DelistedBadge(labelDelisted: _analysis!.labelDelisted, stockStatus: _analysis!.stockStatus, statusReason: _analysis!.statusReason),
                   ],
                 ),
                 Text(_analysis!.companyName,
