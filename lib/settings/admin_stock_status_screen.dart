@@ -123,7 +123,7 @@ class _AdminStockStatusScreenState extends State<AdminStockStatusScreen> {
               // ── Reason TextField ──
               TextField(
                 controller: reasonCtrl,
-                maxLines: null,
+                maxLines: 5,
                 minLines: 3,
                 keyboardType: TextInputType.multiline,
                 decoration: const InputDecoration(
