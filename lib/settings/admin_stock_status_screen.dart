@@ -377,9 +377,14 @@ class _AdminStockStatusScreenState extends State<AdminStockStatusScreen> {
                 : colors.onSurface,
           ),
         ),
-        subtitle: stock.sector != null
-            ? StockSectorBadge(label: stock.sector, small: true)
-            : null,
+        subtitle: Wrap(
+          spacing: 4,
+          runSpacing: 2,
+          children: [
+            if (stock.sector != null) StockSectorBadge(label: stock.sector, small: true),
+            if (stock.primarySector != null) StockSectorBadge(label: stock.primarySector, small: true),
+          ],
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

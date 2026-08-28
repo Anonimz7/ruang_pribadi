@@ -294,6 +294,8 @@ class StockStatusItem {
   final String? statusSetBy;
   final String? statusSetAt;
   final String? sector;
+  final String? primarySector;
+  final String? subSector;
 
   const StockStatusItem({
     required this.ticker,
@@ -304,6 +306,8 @@ class StockStatusItem {
     this.statusSetBy,
     this.statusSetAt,
     this.sector,
+    this.primarySector,
+    this.subSector,
   });
 
   bool get isDelisted => labelDelisted == 1;
@@ -319,5 +323,7 @@ class StockStatusItem {
         statusSetBy: j['status_set_by'] as String?,
         statusSetAt: j['status_set_at'] as String?,
         sector: j['sector'] as String?,
+        primarySector: j['primary_sector'] as String?,
+        subSector: j['sub_sector'] as String?,
       );
 }
