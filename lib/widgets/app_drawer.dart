@@ -34,7 +34,6 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
     final systemApps = AppConfig.getSystemApps();
     final menuApps = AppConfig.getMenuApps();
     final marketApps = AppConfig.getMarketApps();
@@ -45,9 +44,7 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           _buildDrawerHeader(isDark, context),
-          Column(
-            children: systemApps.map((app) => _tile(context, app, locked: false)).toList(),
-          ),
+          ...systemApps.map((app) => _tile(context, app, locked: false)),
           const Divider(),
           if (client.isLoggedIn) _buildMenuSection(menuApps, context, 'FEATURES'),
           if (client.isLoggedIn) const Divider(),
@@ -100,18 +97,20 @@ class AppDrawer extends StatelessWidget {
                     Navigator.pop(context);
                     onLoginTap?.call();
                   },
-                  child: Row(
-                    children: [
-                      Text('Not logged in — tap to login',
-                          style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.white54)),
-                    ],
-                  ),
+                  child: Text('Not logged in — tap to login',
+                      style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white54)),
                 ),
         ),
+        if (client.isLoggedIn)
+          GestureDetector(
+              onTap: onLogout,
+              child: const Text('Logout',
+                  style: TextStyle(
+                      color: Colors.white70, fontSize: 12))),
       ],
     );
   }
