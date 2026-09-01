@@ -1,5 +1,6 @@
 ﻿import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:ruang_pribadi/services/app_registry.dart';
 import 'admin_user_detail_screen.dart';
 import '../services/apis.dart';
 
@@ -44,9 +45,15 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
       setState(() {
         _users = r[0] as List<dynamic>;
         _allApps = List<String>.from(r[1] as List<dynamic>);
+        if (_allApps.isEmpty) {
+          _allApps = appRegistry.map((a) => a.key).toList();
+        }
         final permsResult = r[2] as Map<String, dynamic>;
-        _defaultPerms =
-            List<String>.from(permsResult['default_permissions'] ?? []);
+        _defaultPerms = List<String>.from(
+            permsResult['default_permissions'] ?? []);
+        if (_defaultPerms.isEmpty) {
+          _defaultPerms = getDefaultPermissions();
+        }
       });
     } catch (e) {
       if (mounted) {
@@ -89,7 +96,7 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          title: const Text('Buat User Baru'),
+          title: const Text('Create New User'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -97,7 +104,7 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                 controller: usernameCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Username',
-                  hintText: 'Masukkan username',
+                  hintText: 'Enter username',
                 ),
                 textInputAction: TextInputAction.next,
               ),
@@ -107,7 +114,7 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                 obscureText: true,
                 decoration: const InputDecoration(
                   labelText: 'Password',
-                  hintText: 'Minimal 4 karakter',
+                  hintText: 'Minimum 4 characters',
                 ),
                 textInputAction: TextInputAction.done,
               ),
@@ -128,10 +135,10 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Batal')),
+                child: const Text('Cancel')),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Buat'),
+              child: const Text('Create'),
             ),
           ],
         ),
@@ -148,7 +155,7 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
         );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('User berhasil dibuat')));
+              const SnackBar(content: Text('User created successfully')));
           _load();
         }
       } catch (e) {
@@ -166,7 +173,7 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
     if (username == 'xoot') {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Tidak bisa menghapus admin utama')));
+            const SnackBar(content: Text('Cannot delete main admin')));
       }
       return;
     }
@@ -174,16 +181,17 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Hapus User?'),
-        content: Text('Apakah kamu yakin ingin menghapus user "$username"?'),
+        title: const Text('Delete User?'),
+        content:
+            Text('Are you sure you want to delete user "$username"?'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Batal')),
+              child: const Text('Cancel')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Hapus'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -194,7 +202,7 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
         await _api.deleteUser(userId);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('User berhasil dihapus')));
+              const SnackBar(content: Text('User deleted successfully')));
           _load();
         }
       } catch (e) {
@@ -224,25 +232,24 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kelola Akses User'),
+        title: const Text('Manage User Access'),
         actions: [
           IconButton(
             icon: const Icon(Icons.person_add),
             onPressed: _showCreateUserDialog,
-            tooltip: 'Tambah User',
+            tooltip: 'Add User',
           ),
         ],
       ),
       body: Column(
         children: [
-          // ─── Search Bar ─────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: TextField(
               controller: _searchController,
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
-                hintText: 'Cari user...',
+                hintText: 'Search users...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -261,8 +268,6 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
               ),
             ),
           ),
-
-          // ─── Scrollable content ────────────────
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
@@ -271,7 +276,6 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                     child: _users.isEmpty
                         ? ListView(
                             children: [
-                              // Default section tetap bisa diakses
                               _buildDefaultSection(),
                               const SizedBox(height: 48),
                               Center(
@@ -285,8 +289,8 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                                     const SizedBox(height: 12),
                                     Text(
                                       _searchController.text.isNotEmpty
-                                          ? 'Tidak ada user ditemukan'
-                                          : 'Belum ada user',
+                                          ? 'No users found'
+                                          : 'No users yet',
                                       style: const TextStyle(
                                           color: Colors.grey, fontSize: 14),
                                     ),
@@ -296,9 +300,10 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                             ],
                           )
                         : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12),
                             itemCount:
-                                _users.length + 1, // +1 for default section
+                                _users.length + 1,
                             itemBuilder: (ctx, i) {
                               if (i == 0) return _buildDefaultSection();
                               return _buildUserCard(_users[i - 1]);
@@ -320,10 +325,12 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
           radius: 22,
-          backgroundColor: isAdmin ? const Color(0xFF00C87A) : Colors.orange,
+          backgroundColor:
+              isAdmin ? const Color(0xFF00C87A) : Colors.orange,
           child: Text(username[0].toUpperCase(),
               style: const TextStyle(
                   color: Colors.white,
@@ -333,11 +340,12 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
         title: Row(
           children: [
             Text(username,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 15)),
             const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: isAdmin
                     ? const Color(0xFF00C87A).withValues(alpha: 0.15)
@@ -347,18 +355,19 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
               child: Text(
                 isAdmin ? 'admin' : 'guest',
                 style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: isAdmin ? const Color(0xFF00C87A) : Colors.orange,
-                ),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: isAdmin
+                        ? const Color(0xFF00C87A)
+                        : Colors.orange),
               ),
             ),
           ],
         ),
         subtitle: Text(
           isAdmin
-              ? 'Akses penuh'
-              : '${perms.length} / ${_allApps.length} fitur diizinkan',
+              ? 'Full access'
+              : '${perms.length} / ${_allApps.length} features allowed',
           style: const TextStyle(fontSize: 12, color: Colors.grey),
         ),
         trailing: Row(
@@ -385,26 +394,28 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
               ),
             ),
           );
-          if (result == true) _load(); // refresh if user was deleted
+          if (result == true) _load();
         },
       ),
     );
   }
 
-  // ─── Default Permissions Section ────────────────
-
   Widget _buildDefaultSection() {
+    final menuApps = getMenuApps();
+    final marketApps = getMarketApps();
+    final adminApps = getAdminApps();
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Column(
         children: [
-          // Collapsible header
           InkWell(
             onTap: () =>
                 setState(() => _showDefaultSection = !_showDefaultSection),
             borderRadius: BorderRadius.circular(12),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
                 children: [
                   const Icon(Icons.auto_awesome,
@@ -414,11 +425,11 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Default untuk User Baru',
+                        Text('Default for New Users',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 14)),
                         SizedBox(height: 2),
-                        Text('Fitur yang didapat saat register',
+                        Text('Features granted upon registration',
                             style: TextStyle(fontSize: 11, color: Colors.grey)),
                       ],
                     ),
@@ -438,15 +449,15 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                   ),
                   const SizedBox(width: 8),
                   Icon(
-                    _showDefaultSection ? Icons.expand_less : Icons.expand_more,
+                    _showDefaultSection
+                        ? Icons.expand_less
+                        : Icons.expand_more,
                     color: Colors.grey,
                   ),
                 ],
               ),
             ),
           ),
-
-          // Collapsible body
           if (_showDefaultSection)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
@@ -455,9 +466,7 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                 children: [
                   const Divider(height: 1),
                   const SizedBox(height: 12),
-
-                  // Fitur Lokal
-                  const Text('FITUR LOKAL',
+                  const Text('FEATURES',
                       style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -467,23 +476,11 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: _allApps
-                        .where((a) => [
-                              'bahasa_jepang',
-                              'math_speed',
-                              'password_generator',
-                              'gacha_luck',
-                              'rolling',
-                              'code_diagram',
-                              'bahasa'
-                            ].contains(a))
-                        .map((app) => _defaultChip(app))
-                        .toList(),
+                    children:
+                        menuApps.map((app) => _defaultChip(app.key)).toList(),
                   ),
                   const SizedBox(height: 12),
-
-                  // IHSG Radar
-                  const Text('IHSG RADAR',
+                  const Text('AI RADAR',
                       style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -493,20 +490,11 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: _allApps
-                        .where((a) => [
-                              'news',
-                              'stocks',
-                              'stock_list',
-                              'ihsg_radar',
-                              'reports'
-                            ].contains(a))
-                        .map((app) => _defaultChip(app))
+                    children: marketApps
+                        .map((app) => _defaultChip(app.key))
                         .toList(),
                   ),
                   const SizedBox(height: 12),
-
-                  // VIDEO
                   const Text('VIDEO',
                       style: TextStyle(
                           fontSize: 10,
@@ -523,8 +511,6 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                         .toList(),
                   ),
                   const SizedBox(height: 12),
-
-                  // Admin
                   const Text('ADMIN',
                       style: TextStyle(
                           fontSize: 10,
@@ -535,16 +521,8 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: _allApps
-                        .where((a) => [
-                              'admin_dashboard',
-                              'sitemaps',
-                              'proxies',
-                              'admin_backup',
-                              'idx_upload'
-                            ].contains(a))
-                        .map((app) => _defaultChip(app))
-                        .toList(),
+                    children:
+                        adminApps.map((app) => _defaultChip(app.key)).toList(),
                   ),
                   const SizedBox(height: 10),
                   Container(
@@ -562,7 +540,7 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
                         SizedBox(width: 8),
                         Expanded(
                             child: Text(
-                          'User baru akan otomatis mendapat fitur yang dicentang di sini.',
+                          'New users will automatically get the features checked here.',
                           style: TextStyle(fontSize: 11),
                         )),
                       ],
@@ -581,46 +559,70 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
     return FilterChip(
       label: Text(_label(appKey),
           style: TextStyle(
-            fontSize: 12,
-            color: isActive ? Colors.white : null,
-            fontWeight: isActive ? FontWeight.w600 : null,
-          )),
+              fontSize: 12,
+              color: isActive ? Colors.white : null,
+              fontWeight: isActive ? FontWeight.w600 : null)),
       selected: isActive,
       selectedColor: _color(appKey),
-      backgroundColor: Colors.grey.withValues(alpha: 0.15),
+      backgroundColor: Colors.grey.withOpacity(0.15),
       checkmarkColor: Colors.white,
       onSelected: (v) => _toggleDefault(appKey, v),
     );
   }
 
   String _label(String key) {
-    const map = {
-      'bahasa': '🌐 Bahasa',
-      'bahasa_jepang': '🇯🇵 Bahasa Jepang',
+    final app = appRegistry.firstWhere(
+      (a) => a.key == key,
+      orElse: () => AppDef(
+        key: '',
+        icon: Icons.help,
+        label: '',
+        builder: (_) => const PlaceholderWidget(),
+      ),
+    );
+    if (app.label.isNotEmpty) return app.label;
+
+    const emojiMap = {
+      'language': '🌐 Language',
+      'japanese_alphabet': '🇯🇵 Japanese Alphabet',
       'math_speed': '🧮 Math Speed',
       'password_generator': '🔑 Password Gen',
-      'gacha_luck': '🎰 Gacha Keberuntungan',
+      'gacha_luck': '🎰 Gacha Luck',
       'rolling': '🎲 Rolling Yes/No',
       'code_diagram': '📐 Render Diagram',
       'video_downloader': '🎬 Video Downloader',
-      'news': '📰 Berita',
-      'stocks': '📈 Saham IDX',
-      'stock_list': '📋 Daftar Saham',
+      'news': '📰 News',
+      'stocks': '📈 IDX Stocks',
+      'stock_list': '📋 Stock List',
       'ihsg_radar': '📡 IHSG Radar',
-      'reports': '📋 Laporan',
-      'admin_dashboard': '📊 Dashboard',
+      'reports': '📋 Reports',
+      'user_permissions': '🔐 User Permissions',
+      'server_dashboard': '📊 Dashboard',
       'sitemaps': '🌐 Sitemaps',
       'proxies': '🔗 Proxy Scraper',
-      'admin_backup': '💾 Backup',
-      'idx_upload': '📤 Upload IDX',
+      'backup': '💾 Backup',
+      'stock_status': '🛡️ Stock Status',
+      'idx_upload': '📤 IDX Upload',
     };
-    return map[key] ?? key;
+    return emojiMap[key] ?? key;
   }
 
   Color _color(String key) {
-    const map = {
-      'bahasa': Colors.lightBlue,
-      'bahasa_jepang': Colors.red,
+    final app = appRegistry.firstWhere(
+      (a) => a.key == key,
+      orElse: () => AppDef(
+        key: '',
+        icon: Icons.help,
+        label: '',
+        builder: (_) => const PlaceholderWidget(),
+      ),
+    );
+    if (app.icon != Icons.help) {
+      return _iconToColor(app.icon);
+    }
+    const colorMap = {
+      'language': Colors.lightBlue,
+      'japanese_alphabet': Colors.red,
       'math_speed': Colors.orange,
       'password_generator': Colors.teal,
       'gacha_luck': Colors.amber,
@@ -632,12 +634,65 @@ class _AdminPermScreenState extends State<AdminPermScreen> {
       'stock_list': Colors.teal,
       'ihsg_radar': Colors.purple,
       'reports': Colors.indigo,
-      'admin_dashboard': Colors.cyan,
+      'user_permissions': Colors.blueGrey,
+      'server_dashboard': Colors.cyan,
       'sitemaps': Colors.teal,
       'proxies': Colors.deepPurple,
-      'admin_backup': Colors.blueGrey,
+      'backup': Colors.blueGrey,
+      'stock_status': Colors.green,
       'idx_upload': Colors.brown,
     };
-    return map[key] ?? Colors.grey;
+    return colorMap[key] ?? Colors.grey;
+  }
+
+  Color _iconToColor(IconData icon) {
+    switch (icon) {
+      case Icons.book:
+        return Colors.red;
+      case Icons.calculate:
+        return Colors.orange;
+      case Icons.password:
+        return Colors.teal;
+      case Icons.casino:
+        return Colors.amber;
+      case Icons.change_circle:
+        return Colors.lightGreen;
+      case Icons.account_tree:
+        return Colors.indigo;
+      case Icons.translate:
+        return Colors.lightBlue;
+      case Icons.download:
+        return Colors.pink;
+      case Icons.article:
+        return Colors.blue;
+      case Icons.candlestick_chart:
+        return Colors.green;
+      case Icons.list_alt:
+        return Colors.teal;
+      case Icons.upload_file:
+        return Colors.brown;
+      case Icons.radar:
+        return Colors.purple;
+      case Icons.receipt_long:
+        return Colors.indigo;
+      case Icons.dashboard:
+        return Colors.cyan;
+      case Icons.language:
+        return Colors.teal;
+      case Icons.hub:
+        return Colors.deepPurple;
+      case Icons.backup:
+        return Colors.blueGrey;
+      case Icons.shield:
+        return Colors.green;
+      case Icons.settings:
+        return Colors.blue;
+      case Icons.person:
+        return Colors.orange;
+      case Icons.admin_panel_settings:
+        return Colors.blueGrey;
+      default:
+        return Colors.grey;
+    }
   }
 }

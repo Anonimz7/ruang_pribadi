@@ -1,0 +1,158 @@
+{
+  "apps": [
+    {
+      "key": "settings",
+      "icon": "Icons.settings",
+      "label": "Settings",
+      "section": "system",
+      "defaultPermission": false
+    },
+    {
+      "key": "profile",
+      "icon": "Icons.person",
+      "label": "Profile",
+      "section": "system",
+      "defaultPermission": false
+    },
+    {
+      "key": "japanese_alphabet",
+      "icon": "Icons.book",
+      "label": "Learn Japanese Alphabet",
+      "section": "menu",
+      "defaultPermission": true
+    },
+    {
+      "key": "math_speed",
+      "icon": "Icons.calculate",
+      "label": "Math Speed",
+      "section": "menu",
+      "defaultPermission": true
+    },
+    {
+      "key": "password_generator",
+      "icon": "Icons.password",
+      "label": "Password Generator",
+      "section": "menu",
+      "defaultPermission": true
+    },
+    {
+      "key": "gacha_luck",
+      "icon": "Icons.casino",
+      "label": "Gacha Luck",
+      "section": "menu",
+      "defaultPermission": true
+    },
+    {
+      "key": "rolling",
+      "icon": "Icons.change_circle",
+      "label": "Rolling Yes/No",
+      "section": "menu",
+      "defaultPermission": true
+    },
+    {
+      "key": "code_diagram",
+      "icon": "Icons.account_tree",
+      "label": "Render Diagram",
+      "section": "menu",
+      "defaultPermission": true
+    },
+    {
+      "key": "language",
+      "icon": "Icons.translate",
+      "label": "Language",
+      "section": "menu",
+      "defaultPermission": true
+    },
+    {
+      "key": "video_downloader",
+      "icon": "Icons.download",
+      "label": "Video Downloader",
+      "section": "menu",
+      "defaultPermission": true
+    },
+    {
+      "key": "news",
+      "icon": "Icons.article",
+      "label": "News",
+      "section": "market",
+      "defaultPermission": true
+    },
+    {
+      "key": "stocks",
+      "icon": "Icons.candlestick_chart",
+      "label": "IDX Stocks",
+      "section": "market",
+      "defaultPermission": true
+    },
+    {
+      "key": "stock_list",
+      "icon": "Icons.list_alt",
+      "label": "Stock List",
+      "section": "market",
+      "defaultPermission": true
+    },
+    {
+      "key": "ihsg_radar",
+      "icon": "Icons.radar",
+      "label": "IHSG Radar",
+      "section": "market",
+      "defaultPermission": true
+    },
+    {
+      "key": "reports",
+      "icon": "Icons.receipt_long",
+      "label": "Reports",
+      "section": "market",
+      "defaultPermission": true
+    },
+    {
+      "key": "user_permissions",
+      "icon": "Icons.admin_panel_settings",
+      "label": "User Permissions",
+      "section": "admin",
+      "defaultPermission": false
+    },
+    {
+      "key": "server_dashboard",
+      "icon": "Icons.dashboard",
+      "label": "Server Dashboard",
+      "section": "admin",
+      "defaultPermission": false
+    },
+    {
+      "key": "sitemaps",
+      "icon": "Icons.language",
+      "label": "Sitemaps",
+      "section": "admin",
+      "defaultPermission": false
+    },
+    {
+      "key": "proxies",
+      "icon": "Icons.hub",
+      "label": "Proxy Scraper",
+      "section": "admin",
+      "defaultPermission": false
+    },
+    {
+      "key": "backup",
+      "icon": "Icons.backup",
+      "label": "Backup System",
+      "section": "admin",
+      "defaultPermission": false
+    },
+    {
+      "key": "stock_status",
+      "icon": "Icons.shield",
+      "label": "Stock Status",
+      "section": "admin",
+      "defaultPermission": false
+    },
+    {
+      "key": "idx_upload",
+      "icon": "Icons.upload_file",
+      "label": "IDX Upload",
+      "section": "admin",
+      "defaultPermission": false
+    }
+  ]
+}

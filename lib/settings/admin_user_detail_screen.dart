@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:ruang_pribadi/services/app_registry.dart';
 import '../services/apis.dart';
 
-/// Detail page for managing a single user's permissions and visibility.
 class AdminUserDetailScreen extends StatefulWidget {
   final int userId;
   final String username;
@@ -45,10 +45,17 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
       final detail = results[0] as Map<String, dynamic>;
       setState(() {
         _allApps = List<String>.from(results[1] as List<dynamic>);
+        if (_allApps.isEmpty) {
+          _allApps = appRegistry.map((a) => a.key).toList();
+        }
         _permissions = List<String>.from(detail['permissions'] ?? []);
         _hiddenMenus = List<String>.from(detail['hidden_menus'] ?? []);
+        final permsResult = results[2] as Map<String, dynamic>;
         _defaultPerms = List<String>.from(
-            (results[2] as Map<String, dynamic>)['default_permissions'] ?? []);
+            permsResult['default_permissions'] ?? []);
+        if (_defaultPerms.isEmpty) {
+          _defaultPerms = getDefaultPermissions();
+        }
         _created = detail['created_at'];
         _lastLogin = detail['last_login'];
       });
@@ -63,8 +70,6 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
   }
 
   bool get isAdmin => widget.tier == 'admin';
-
-  // ─── Permission toggles ───────────────────────────────
 
   Future<void> _togglePerm(String appKey, bool grant) async {
     try {
@@ -94,8 +99,6 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
     }
   }
 
-  // ─── Visibility toggles ───────────────────────────────
-
   Future<void> _toggleVisibility(String appKey, bool hide) async {
     try {
       hide
@@ -116,17 +119,17 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Hapus User?'),
+        title: const Text('Delete User?'),
         content: Text(
-            'Apakah kamu yakin ingin menghapus user "${widget.username}"?'),
+            'Are you sure you want to delete user "${widget.username}"?'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Batal')),
+              child: const Text('Cancel')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Hapus'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -136,8 +139,8 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
         await _api.deleteUser(widget.userId);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('User berhasil dihapus')));
-          Navigator.pop(context, true); // return true to signal refresh
+              const SnackBar(content: Text('User deleted successfully')));
+          Navigator.pop(context, true);
         }
       } catch (e) {
         if (mounted) {
@@ -167,7 +170,7 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.red),
               onPressed: _deleteUser,
-              tooltip: 'Hapus user',
+              tooltip: 'Delete user',
             ),
         ],
       ),
@@ -176,16 +179,12 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // ─── User Info ─────────────────────────
             _buildUserInfoCard(),
             const SizedBox(height: 16),
 
             if (!isAdmin) ...[
-              // ─── Quick Actions ─────────────────────
               _buildQuickActions(),
               const SizedBox(height: 20),
-
-              // ─── Permissions & Visibility ─────────
               ..._buildMenuSections(),
             ],
 
@@ -204,8 +203,8 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
                     SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Admin memiliki akses penuh ke semua fitur. '
-                        'Menu selalu tampil.',
+                        'Admin has full access to all features. '
+                        'Menus are always visible.',
                         style: TextStyle(fontSize: 13),
                       ),
                     ),
@@ -258,11 +257,10 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
                     child: Text(
                       isAdmin ? 'admin' : 'guest',
                       style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color:
-                            isAdmin ? const Color(0xFF00C87A) : Colors.orange,
-                      ),
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color:
+                              isAdmin ? const Color(0xFF00C87A) : Colors.orange),
                     ),
                   ),
                 ],
@@ -281,7 +279,7 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('AKSI CEPAT',
+            const Text('QUICK ACTIONS',
                 style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -295,7 +293,7 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
                     onPressed: () => _setPerms(List.from(_allApps)),
                     icon: const Icon(Icons.check_circle_outline,
                         size: 16, color: Colors.green),
-                    label: const Text('Izinkan Semua',
+                    label: const Text('Grant All',
                         style: TextStyle(fontSize: 12, color: Colors.green)),
                     style: OutlinedButton.styleFrom(
                         side: BorderSide(
@@ -307,7 +305,7 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () => _setPerms([]),
                     icon: const Icon(Icons.block, size: 16, color: Colors.red),
-                    label: const Text('Cabut Semua',
+                    label: const Text('Revoke All',
                         style: TextStyle(fontSize: 12, color: Colors.red)),
                     style: OutlinedButton.styleFrom(
                         side: BorderSide(
@@ -330,7 +328,7 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            Text('${_permissions.length} / ${_allApps.length} fitur diizinkan',
+            Text('${_permissions.length} / ${_allApps.length} features allowed',
                 style: const TextStyle(fontSize: 11, color: Colors.grey)),
           ],
         ),
@@ -340,35 +338,13 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
 
   List<Widget> _buildMenuSections() {
     return [
-      _buildMenuSection('FITUR LOKAL', [
-        'bahasa',
-        'bahasa_jepang',
-        'math_speed',
-        'password_generator',
-        'gacha_luck',
-        'rolling',
-        'code_diagram',
-      ]),
+      _buildMenuSection('FEATURES', getMenuApps().map((a) => a.key).toList()),
       const SizedBox(height: 12),
-      _buildMenuSection('VIDEO', [
-        'video_downloader',
-      ]),
+      _buildMenuSection('VIDEO', ['video_downloader']),
       const SizedBox(height: 12),
-      _buildMenuSection('IHSG RADAR', [
-        'news',
-        'stocks',
-        'stock_list',
-        'ihsg_radar',
-        'reports',
-      ]),
+      _buildMenuSection('AI RADAR', getMarketApps().map((a) => a.key).toList()),
       const SizedBox(height: 12),
-      _buildMenuSection('ADMIN', [
-        'admin_dashboard',
-        'sitemaps',
-        'proxies',
-        'admin_backup',
-        'idx_upload',
-      ]),
+      _buildMenuSection('ADMIN', getAdminApps().map((a) => a.key).toList()),
     ];
   }
 
@@ -400,17 +376,16 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
     final label = _label(appKey);
     final color = _color(appKey);
 
-    // Permission + visibility label
     String statusText;
     Color statusColor;
     if (hasAccess && !isHidden) {
-      statusText = 'Aktif';
+      statusText = 'Active';
       statusColor = const Color(0xFF00C87A);
     } else if (hasAccess && isHidden) {
-      statusText = 'Tersembunyi';
+      statusText = 'Hidden';
       statusColor = Colors.orange;
     } else {
-      statusText = 'Nonaktif';
+      statusText = 'Inactive';
       statusColor = Colors.grey;
     }
 
@@ -418,14 +393,12 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          // Permission toggle
           Switch(
             value: hasAccess,
             onChanged: (v) => _togglePerm(appKey, v),
             activeColor: color,
           ),
           const SizedBox(width: 8),
-          // Label
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,7 +411,6 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
               ],
             ),
           ),
-          // Visibility toggle
           if (hasAccess)
             IconButton(
               icon: Icon(
@@ -447,8 +419,7 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
                 color: isHidden ? Colors.orange : const Color(0xFF00C87A),
               ),
               onPressed: () => _toggleVisibility(appKey, !isHidden),
-              tooltip:
-                  isHidden ? 'Tampilkan di drawer' : 'Sembunyikan dari drawer',
+              tooltip: isHidden ? 'Show in drawer' : 'Hide from drawer',
             ),
         ],
       ),
@@ -456,50 +427,83 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
   }
 
   String _label(String key) {
-    const map = {
-      'bahasa': '🌐 Bahasa',
-      'bahasa_jepang': '🇯🇵 Bahasa Jepang',
-      'math_speed': '🧮 Math Speed',
-      'password_generator': '🔑 Password Gen',
-      'gacha_luck': '🎰 Gacha Keberuntungan',
-      'rolling': '🎲 Rolling Yes/No',
-      'code_diagram': '📐 Render Diagram',
-      'video_downloader': '🎬 Video Downloader',
-      'news': '📰 Berita',
-      'stocks': '📈 Saham IDX',
-      'stock_list': '📋 Daftar Saham',
-      'ihsg_radar': '📡 IHSG Radar',
-      'reports': '📋 Laporan',
-      'admin_dashboard': '📊 Dashboard',
-      'sitemaps': '🌐 Sitemaps',
-      'proxies': '🔗 Proxy Scraper',
-      'admin_backup': '💾 Backup',
-      'idx_upload': '📤 Upload IDX',
-    };
-    return map[key] ?? key;
+    final app = appRegistry.firstWhere(
+      (a) => a.key == key,
+      orElse: () => AppDef(
+        key: '',
+        icon: Icons.help,
+        label: '',
+        builder: (_) => const PlaceholderWidget(),
+      ),
+    );
+    if (app.label.isNotEmpty) return app.label;
+    return key;
   }
 
   Color _color(String key) {
-    const map = {
-      'bahasa': Colors.lightBlue,
-      'bahasa_jepang': Colors.red,
-      'math_speed': Colors.orange,
-      'password_generator': Colors.teal,
-      'gacha_luck': Colors.amber,
-      'rolling': Colors.lightGreen,
-      'code_diagram': Colors.indigo,
-      'video_downloader': Colors.pink,
-      'news': Colors.blue,
-      'stocks': Colors.green,
-      'stock_list': Colors.teal,
-      'ihsg_radar': Colors.purple,
-      'reports': Colors.indigo,
-      'admin_dashboard': Colors.cyan,
-      'sitemaps': Colors.teal,
-      'proxies': Colors.deepPurple,
-      'admin_backup': Colors.blueGrey,
-      'idx_upload': Colors.brown,
-    };
-    return map[key] ?? Colors.grey;
+    final app = appRegistry.firstWhere(
+      (a) => a.key == key,
+      orElse: () => AppDef(
+        key: '',
+        icon: Icons.help,
+        label: '',
+        builder: (_) => const PlaceholderWidget(),
+      ),
+    );
+    if (app.icon != Icons.help) {
+      return _iconToColor(app.icon);
+    }
+    return Colors.grey;
+  }
+
+  Color _iconToColor(IconData icon) {
+    switch (icon) {
+      case Icons.book:
+        return Colors.red;
+      case Icons.calculate:
+        return Colors.orange;
+      case Icons.password:
+        return Colors.teal;
+      case Icons.casino:
+        return Colors.amber;
+      case Icons.change_circle:
+        return Colors.lightGreen;
+      case Icons.account_tree:
+        return Colors.indigo;
+      case Icons.translate:
+        return Colors.lightBlue;
+      case Icons.download:
+        return Colors.pink;
+      case Icons.article:
+        return Colors.blue;
+      case Icons.candlestick_chart:
+        return Colors.green;
+      case Icons.list_alt:
+        return Colors.teal;
+      case Icons.upload_file:
+        return Colors.brown;
+      case Icons.radar:
+        return Colors.purple;
+      case Icons.receipt_long:
+        return Colors.indigo;
+      case Icons.dashboard:
+        return Colors.cyan;
+      case Icons.language:
+        return Colors.teal;
+      case Icons.hub:
+        return Colors.deepPurple;
+      case Icons.backup:
+        return Colors.blueGrey;
+      case Icons.shield:
+        return Colors.green;
+      case Icons.settings:
+        return Colors.blue;
+      case Icons.person:
+        return Colors.orange;
+      case Icons.admin_panel_settings:
+        return Colors.blueGrey;
+      default:
+        return Colors.grey;
+    }
   }
 }

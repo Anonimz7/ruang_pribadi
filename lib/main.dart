@@ -6,19 +6,39 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'math_speed/math.dart';
 import 'services/api_client.dart';
 import 'services/apis.dart';
+import 'services/app_config.dart';
 import 'services/app_registry.dart';
 import 'services/dark_mode_service.dart';
 import 'services/update_service.dart';
+import 'bahasa_jepun/bahasa_jepun.dart';
+import 'bahasa/screens/bahasa_home_screen.dart';
+import 'news_intel/screens/news_screen.dart';
+import 'news_intel/screens/stocks_screen.dart';
+import 'news_intel/screens/stock_list_screen.dart';
+import 'news_intel/screens/market_screen.dart';
+import 'news_intel/screens/idx_upload_screen.dart';
+import 'settings/admin_perm_screen.dart';
+import 'settings/admin_dashboard_screen.dart';
+import 'settings/reports_screen.dart';
+import 'settings/sitemaps_screen.dart';
+import 'settings/proxy_settings_screen.dart';
+import 'settings/profile_screen.dart';
+import 'settings/backup_screen.dart';
+import 'settings/admin_stock_status_screen.dart';
+import 'video_downloader/screens/video_downloader_screen.dart';
+import 'gacha_luck/gacha_screen.dart';
+import 'rolling/rolling_screen.dart';
+import 'code_diagram/screens/code_diagram_screen.dart';
+import 'passwrod_generator/pasgen.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/login_dialog.dart';
 import 'widgets/update_dialog.dart';
-import 'video_downloader/screens/video_downloader_screen.dart';
 
-/// Top-level callback so child screens can restart the download badge poll.
 VoidCallback? onDownloadStarted;
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppConfig.load();
   runApp(const MyApp());
 }
 
@@ -254,35 +274,51 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  /// Build page based on index — checks permissions
   Widget _buildPage(int index) {
-    final app = appRegistry[index];
+    final app = AppConfig.apps[index];
+    if (app == null) return const Center(child: Text('Page not found'));
 
-    // system (settings, profile) = selalu bisa
-    if (app.section == 'system') return app.builder(context);
-
-    // admin section = admin only
+    if (app.section == 'system') return _buildApp(app.key);
     if (app.section == 'admin') {
-      if (_client.tier == 'admin') return app.builder(context);
+      if (_client.tier == 'admin') return _buildApp(app.key);
       return _noAccess(app);
     }
 
-    // fitur lain = butuh login + permission
     if (!_client.isLoggedIn) {
-      // Show login dialog popup instead of full page
       Future.microtask(() => _showLoginDialog());
-      return _noAccess(AppDef(
-        key: app.key,
-        icon: app.icon,
-        label: app.label,
-        builder: app.builder,
-        section: app.section,
-      ));
+      return _noAccess(app);
     }
 
-    if (_client.canAccess(app.key)) return app.builder(context);
-
+    if (_client.canAccess(app.key)) return _buildApp(app.key);
     return _noAccess(app);
+  }
+
+  Widget _buildApp(String key) {
+    return switch (key) {
+      'settings' => const PengaturanPage(),
+      'profile' => const ProfileScreen(),
+      'japanese_alphabet' => const BahasaJepun(),
+      'math_speed' => const MathApp(),
+      'password_generator' => const PasswordGeneratorPage(),
+      'gacha_luck' => const GachaLuckScreen(),
+      'rolling' => const RollingScreen(),
+      'code_diagram' => const CodeDiagramScreen(),
+      'language' => const BahasaHomeScreen(),
+      'video_downloader' => const VideoDownloaderScreen(),
+      'news' => const NewsScreen(),
+      'stocks' => const StocksScreen(),
+      'stock_list' => const StockListScreen(),
+      'ihsg_radar' => const MarketScreen(),
+      'reports' => const ReportsScreen(),
+      'user_permissions' => const AdminPermScreen(),
+      'server_dashboard' => const AdminDashboardScreen(),
+      'sitemaps' => const SitemapsScreen(),
+      'proxies' => const ProxySettingsScreen(),
+      'backup' => const BackupScreen(),
+      'stock_status' => const AdminStockStatusScreen(),
+      'idx_upload' => const IdxUploadScreen(),
+      _ => const PlaceholderWidget(),
+    };
   }
 
   @override
@@ -371,7 +407,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _noAccess(AppDef app) {
+  Widget _noAccess(MenuConfig app) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -380,11 +416,11 @@ class _MainPageState extends State<MainPage> {
           children: [
             const Icon(Icons.lock_outline, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
-            Text('Akses Terbatas',
+            Text('Access Restricted',
                 style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
-              'Anda belum memiliki akses ke "${app.label}".\nHubungi admin untuk mendapatkan izin.',
+              'You do not have access to "${app.label}".\nContact admin for permissions.',
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.grey),
             ),
