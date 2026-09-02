@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penerjemah - Super App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .translator-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: var(--spacing-md);
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .translator-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .swap-btn {
+            padding: var(--spacing-sm);
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .swap-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .translation-result {
+            min-height: 200px;
+            padding: var(--spacing-md);
+            background: var(--bg-body);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar (sama seperti index.html) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <svg class="sidebar-logo" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <span class="sidebar-title">Super App</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/index.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+                <a href="/pages/translator.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7v2H4v2h1.54C6.32 9.36 8.5 11.59 11.5 13.31L8.93 15.87 10.34 17.28l2.53-2.53v.32z"/></svg>Penerjemah</a>
+                <a href="/pages/quiz.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Kuis Matematika</a>
+                <a href="/pages/password.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>Generator Password</a>
+                <a href="/pages/gacha.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>Gacha</a>
+                <a href="/pages/decision.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Rolling Ya/Tidak</a>
+                <a href="/pages/diagram.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z"/></svg>Diagram</a>
+                <a href="/pages/download.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7z"/></svg>Downloader</a>
+                <a href="/pages/news.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>Berita</a>
+                <a href="/pages/settings.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>Pengaturan</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title">Penerjemah Multi-Bahasa</h1>
+                <button class="btn-icon" id="themeToggle">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 21c-4.97 0-9-4.03-9-9s4.03-9 9-9c.83 0 1.64.11 2.41.32C5.09 14.09 6.23 18.17 9 21z"/></svg>
+                </button>
+            </header>
+
+            <div class="card">
+                <div class="lang-selector">
+                    <select class="form-select" id="sourceLang" style="flex: 1;">
+                        <option value="id">Bahasa Indonesia</option>
+                        <option value="en">English</option>
+                        <option value="ja">日本語 (Jepang)</option>
+                        <option value="zh">中文 (Tiongkok)</option>
+                        <option value="ko">한국어 (Korea)</option>
+                        <option value="ar">العربية (Arab)</option>
+                    </select>
+
+                    <button class="swap-btn" id="swapLang" title="Tukar bahasa">
+                        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+                    </button>
+
+                    <select class="form-select" id="targetLang" style="flex: 1;">
+                        <option value="en">English</option>
+                        <option value="id">Bahasa Indonesia</option>
+                        <option value="ja">日本語 (Jepang)</option>
+                        <option value="zh">中文 (Tiongkok)</option>
+                        <option value="ko">한국어 (Korea)</option>
+                        <option value="ar">العربية (Arab)</option>
+                    </select>
+                </div>
+
+                <div class="translator-container">
+                    <div>
+                        <label class="form-label">Teks Asli</label>
+                        <textarea 
+                            class="form-textarea" 
+                            id="sourceText" 
+                            placeholder="Masukkan teks yang ingin diterjemahkan..."
+                            rows="8"
+                        ></textarea>
+                        <div class="flex justify-between mt-1">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);" id="charCount">0 karakter</span>
+                            <button class="btn btn-secondary btn-sm" id="clearBtn">Bersihkan</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg class="nav-icon" style="fill: var(--text-secondary)" viewBox="0 0 24 24">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Hasil Terjemahan</label>
+                        <div class="translation-result" id="translationResult">
+                            <p style="color: var(--text-secondary); text-align: center; margin-top: 80px;">
+                                Hasil terjemahan akan muncul di sini
+                            </p>
+                        </div>
+                        <div class="flex justify-between mt-1">
+                            <span></span>
+                            <button class="btn btn-secondary btn-sm" id="copyBtn">
+                                <svg class="nav-icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                                Salin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <button class="btn btn-primary" id="translateBtn" style="width: 100%;">
+                        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7v2H4v2h1.54C6.32 9.36 8.5 11.59 11.5 13.31L8.93 15.87 10.34 17.28l2.53-2.53v.32z"/></svg>
+                        Terjemahkan
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container"></div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        if (!auth.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+
+        storage.initTheme();
+
+        // Character count
+        document.getElementById('sourceText').addEventListener('input', (e) => {
+            document.getElementById('charCount').textContent = `${e.target.value.length} karakter`;
+        });
+
+        // Clear button
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('sourceText').value = '';
+            document.getElementById('translationResult').innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 80px;">Hasil terjemahan akan muncul di sini</p>';
+            document.getElementById('charCount').textContent = '0 karakter';
+        });
+
+        // Swap languages
+        document.getElementById('swapLang').addEventListener('click', () => {
+            const sourceLang = document.getElementById('sourceLang');
+            const targetLang = document.getElementById('targetLang');
+            const temp = sourceLang.value;
+            sourceLang.value = targetLang.value;
+            targetLang.value = temp;
+            
+            // Also swap text if exists
+            const sourceText = document.getElementById('sourceText').value;
+            const resultText = document.getElementById('translationResult').innerText;
+            
+            if (sourceText && resultText && resultText !== 'Hasil terjemahan akan muncul di sini') {
+                document.getElementById('sourceText').value = resultText;
+                document.getElementById('translationResult').textContent = sourceText;
+            }
+        });
+
+        // Copy button
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const result = document.getElementById('translationResult').innerText;
+            if (result && result !== 'Hasil terjemahan akan muncul di sini') {
+                ui.copyToClipboard(result);
+            }
+        });
+
+        // Translate button
+        document.getElementById('translateBtn').addEventListener('click', async () => {
+            const sourceText = document.getElementById('sourceText').value.trim();
+            const sourceLang = document.getElementById('sourceLang').value;
+            const targetLang = document.getElementById('targetLang').value;
+            const translateBtn = document.getElementById('translateBtn');
+
+            if (!sourceText) {
+                ui.showToast('Masukkan teks yang ingin diterjemahkan', 'warning');
+                return;
+            }
+
+            ui.setButtonLoading(translateBtn, true, 'Menerjemahkan...');
+
+            try {
+                // Call translation API
+                const response = await api.post('/api/translate', {
+                    text: sourceText,
+                    source_lang: sourceLang,
+                    target_lang: targetLang
+                });
+
+                const resultDiv = document.getElementById('translationResult');
+                resultDiv.textContent = response.translated_text || response.result || 'Terjemahan tidak tersedia';
+                
+                ui.showToast('Terjemahan berhasil', 'success');
+            } catch (error) {
+                console.error('Translation error:', error);
+                ui.showToast(error.message || 'Gagal menerjemahkan teks', 'error');
+            } finally {
+                ui.setButtonLoading(translateBtn, false);
+            }
+        });
+
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            storage.toggleDarkMode();
+        });
+    </script>
+</body>
+</html>

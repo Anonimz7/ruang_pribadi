@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Super App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .login-logo {
+            width: 64px;
+            height: 64px;
+            fill: var(--primary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: var(--spacing-xs);
+        }
+
+        .login-form {
+            margin-top: var(--spacing-lg);
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--spacing-md);
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .btn-block {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            margin-top: var(--spacing-md);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <svg class="login-logo" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <h1 class="login-title">Super App</h1>
+                <p class="login-subtitle">Masuk untuk melanjutkan</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        class="form-input" 
+                        placeholder="Masukkan username"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="Masukkan password"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <div class="form-footer">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember">
+                        Ingat saya
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+                    Masuk
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        // Initialize theme
+        storage.initTheme();
+
+        // Cek jika sudah login
+        if (auth.isAuthenticated()) {
+            window.location.href = '/index.html';
+        }
+
+        // Handle login form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            const loginBtn = document.getElementById('loginBtn');
+
+            ui.setButtonLoading(loginBtn, true, 'Memuat...');
+
+            try {
+                const result = await auth.login(username, password);
+
+                if (result.success) {
+                    ui.showToast('Login berhasil', 'success');
+                    
+                    // Simpan preferensi remember me
+                    if (!remember) {
+                        // Jika tidak remember, token akan hilang saat browser ditutup
+                        // Ini bisa diimplementasikan dengan sessionStorage instead of localStorage
+                    }
+                    
+                    // Redirect ke dashboard setelah delay singkat
+                    setTimeout(() => {
+                        window.location.href = '/index.html';
+                    }, 500);
+                } else {
+                    ui.showToast(result.error || 'Login gagal', 'error');
+                    ui.setButtonLoading(loginBtn, false);
+                }
+            } catch (error) {
+                ui.showToast(error.message || 'Terjadi kesalahan', 'error');
+                ui.setButtonLoading(loginBtn, false);
+            }
+        });
+
+        // Allow enter key to submit
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('loginForm').requestSubmit();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

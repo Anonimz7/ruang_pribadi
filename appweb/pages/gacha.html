@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gacha Keberuntungan - Super App</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <svg class="sidebar-logo" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span class="sidebar-title">Super App</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/index.html" class="nav-item">Dashboard</a>
+                <a href="/pages/gacha.html" class="nav-item active">Gacha</a>
+                <a href="/pages/settings.html" class="nav-item">Pengaturan</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title">Gacha Keberuntungan</h1>
+                <button class="btn-icon" id="themeToggle">🌓</button>
+            </header>
+            <div class="card text-center" style="padding: var(--spacing-xl);">
+                <div id="gachaWheel" style="font-size: 8rem; margin: var(--spacing-lg);">🎰</div>
+                <h2 id="gachaResult" style="margin-bottom: var(--spacing-md);">Klik tombol untuk mencoba keberuntungan!</h2>
+                <button class="btn btn-primary btn-lg" id="pullBtn" style="padding: var(--spacing-md) var(--spacing-xl); font-size: 1.25rem;">
+                    🎲 Coba Gacha
+                </button>
+                <div class="mt-2">
+                    <p style="color: var(--text-secondary);">Tingkat keberuntungan akan ditentukan secara acak</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div class="toast-container"></div>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        if (!auth.isAuthenticated()) window.location.href = '/login.html';
+        storage.initTheme();
+        document.getElementById('themeToggle').addEventListener('click', () => storage.toggleDarkMode());
+        
+        const luckLevels = [
+            { emoji: '😢', label: 'Buruk', color: '#94a3b8' },
+            { emoji: '😐', label: 'Biasa', color: '#64748b' },
+            { emoji: '🙂', label: 'Bagus', color: '#22c55e' },
+            { emoji: '😊', label: 'Sangat Bagus', color: '#3b82f6' },
+            { emoji: '🤩', label: 'LEGENDARIS!', color: '#a855f7' }
+        ];
+
+        document.getElementById('pullBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('pullBtn');
+            const wheel = document.getElementById('gachaWheel');
+            const result = document.getElementById('gachaResult');
+            
+            btn.disabled = true;
+            let spin = 0;
+            const interval = setInterval(() => {
+                wheel.textContent = luckLevels[spin % 5].emoji;
+                spin++;
+                if (spin > 15) {
+                    clearInterval(interval);
+                    const luck = Math.floor(Math.random() * 100);
+                    let level;
+                    if (luck < 10) level = 4;
+                    else if (luck < 30) level = 3;
+                    else if (luck < 50) level = 2;
+                    else if (luck < 70) level = 1;
+                    else level = 0;
+                    
+                    wheel.textContent = luckLevels[level].emoji;
+                    result.innerHTML = `<span style="color: ${luckLevels[level].color}; font-weight: 600;">${luckLevels[level].label}</span>`;
+                    
+                    storage.addGachaResult({ luck: level, timestamp: new Date().toISOString() });
+                    ui.showToast(`Hasil: ${luckLevels[level].label}`, level >= 2 ? 'success' : 'info');
+                    btn.disabled = false;
+                }
+            }, 150);
+        });
+    </script>
+</body>
+</html>
