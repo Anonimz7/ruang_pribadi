@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika - Super App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .quiz-setup, .quiz-active, .quiz-result { display: none; }
+        .quiz-setup.active, .quiz-active.active, .quiz-result.active { display: block; }
+        
+        .question-card {
+            text-align: center;
+            padding: var(--spacing-xl);
+        }
+        
+        .question-text {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .option-btn {
+            padding: var(--spacing-lg);
+            font-size: 1.25rem;
+            border: 2px solid var(--border-color);
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .option-btn.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.wrong {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <svg class="sidebar-logo" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span class="sidebar-title">Super App</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/index.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+                <a href="/pages/quiz.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Kuis Matematika</a>
+                <a href="/pages/password.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>Generator Password</a>
+                <a href="/pages/gacha.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>Gacha</a>
+                <a href="/pages/translator.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7v2H4v2h1.54C6.32 9.36 8.5 11.59 11.5 13.31L8.93 15.87 10.34 17.28l2.53-2.53v.32z"/></svg>Penerjemah</a>
+                <a href="/pages/settings.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>Pengaturan</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title">Kuis Kecepatan Matematika</h1>
+                <button class="btn-icon" id="themeToggle"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 21c-4.97 0-9-4.03-9-9s4.03-9 9-9c.83 0 1.64.11 2.41.32C5.09 14.09 6.23 18.17 9 21z"/></svg></button>
+            </header>
+
+            <!-- Setup -->
+            <div class="quiz-setup active" id="quizSetup">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Pengaturan Kuis</h2>
+                    </div>
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Jumlah Soal</label>
+                            <select class="form-select" id="questionCount">
+                                <option value="5">5 Soal</option>
+                                <option value="10" selected>10 Soal</option>
+                                <option value="20">20 Soal</option>
+                                <option value="50">50 Soal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Waktu per Soal (detik)</label>
+                            <select class="form-select" id="timeLimit">
+                                <option value="10">10 detik</option>
+                                <option value="15" selected>15 detik</option>
+                                <option value="30">30 detik</option>
+                                <option value="60">60 detik</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Operasi</label>
+                            <select class="form-select" id="operation">
+                                <option value="all">Semua Operasi</option>
+                                <option value="add">Penambahan (+)</option>
+                                <option value="subtract">Pengurangan (-)</option>
+                                <option value="multiply">Perkalian (×)</option>
+                                <option value="divide">Pembagian (÷)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tingkat Kesulitan</label>
+                            <select class="form-select" id="difficulty">
+                                <option value="easy">Mudah</option>
+                                <option value="medium" selected>Sedang</option>
+                                <option value="hard">Sulit</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="startBtn" style="width: 100%; margin-top: var(--spacing-md);">
+                        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        Mulai Kuis
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Quiz -->
+            <div class="quiz-active" id="quizActive">
+                <div class="card">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span>Soal <span id="currentQuestion">1</span> dari <span id="totalQuestions">10</span></span>
+                        <span class="timer">⏱️ <span id="timer">15</span>s</span>
+                    </div>
+                    <div class="question-card">
+                        <div class="question-text" id="questionText">25 + 17 = ?</div>
+                        <div class="options-grid" id="optionsGrid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div class="quiz-result" id="quizResult">
+                <div class="card text-center">
+                    <div style="font-size: 4rem; margin-bottom: var(--spacing-md);" id="resultEmoji">🎉</div>
+                    <h2 style="margin-bottom: var(--spacing-sm);">Kuis Selesai!</h2>
+                    <div class="grid grid-3 mb-2">
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 600;" id="finalScore">8/10</div>
+                            <div style="color: var(--text-secondary);">Skor</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 600;" id="finalAccuracy">80%</div>
+                            <div style="color: var(--text-secondary);">Akurasi</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 600;" id="finalTime">45s</div>
+                            <div style="color: var(--text-secondary);">Waktu Total</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 justify-center">
+                        <button class="btn btn-secondary" id="homeBtn">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                            Dashboard
+                        </button>
+                        <button class="btn btn-primary" id="retryBtn">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                            Main Lagi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container"></div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        if (!auth.isAuthenticated()) window.location.href = '/login.html';
+        storage.initTheme();
+
+        let quizState = {
+            questions: [],
+            currentIdx: 0,
+            score: 0,
+            startTime: null,
+            timer: null,
+            timeLeft: 0
+        };
+
+        document.getElementById('themeToggle').addEventListener('click', () => storage.toggleDarkMode());
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('retryBtn').addEventListener('click', () => {
+            showSection('quizSetup');
+        });
+        document.getElementById('homeBtn').addEventListener('click', () => {
+            window.location.href = '/index.html';
+        });
+
+        function showSection(id) {
+            ['quizSetup', 'quizActive', 'quizResult'].forEach(s => {
+                document.getElementById(s).classList.remove('active');
+            });
+            document.getElementById(id).classList.add('active');
+        }
+
+        function generateQuestion(op, diff) {
+            const ranges = {
+                easy: { min: 1, max: 10 },
+                medium: { min: 5, max: 50 },
+                hard: { min: 10, max: 100 }
+            };
+            const { min, max } = ranges[diff];
+            
+            let a = Math.floor(Math.random() * (max - min + 1)) + min;
+            let b = Math.floor(Math.random() * (max - min + 1)) + min;
+            
+            if (op === 'divide') {
+                b = Math.floor(Math.random() * 9) + 2;
+                a = b * (Math.floor(Math.random() * 10) + 1);
+            } else if (op === 'multiply' && diff === 'easy') {
+                a = Math.floor(Math.random() * 5) + 1;
+                b = Math.floor(Math.random() * 5) + 1;
+            }
+            
+            let symbol, answer;
+            switch(op) {
+                case 'add': symbol = '+'; answer = a + b; break;
+                case 'subtract': symbol = '-'; answer = a - b; break;
+                case 'multiply': symbol = '×'; answer = a * b; break;
+                case 'divide': symbol = '÷'; answer = a / b; break;
+            }
+            
+            // Generate wrong options
+            const options = new Set([answer]);
+            while(options.size < 4) {
+                const offset = Math.floor(Math.random() * 10) - 5;
+                const wrong = answer + offset;
+                if (wrong !== answer && wrong >= 0) options.add(wrong);
+            }
+            
+            return {
+                text: `${a} ${symbol} ${b} = ?`,
+                answer,
+                options: Array.from(options).sort(() => Math.random() - 0.5)
+            };
+        }
+
+        function startQuiz() {
+            const count = parseInt(document.getElementById('questionCount').value);
+            const time = parseInt(document.getElementById('timeLimit').value);
+            const op = document.getElementById('operation').value;
+            const diff = document.getElementById('difficulty').value;
+            
+            quizState = {
+                questions: [],
+                currentIdx: 0,
+                score: 0,
+                startTime: Date.now(),
+                timer: null,
+                timeLeft: time,
+                totalTime: time,
+                totalQuestions: count,
+                operation: op,
+                difficulty: diff
+            };
+            
+            // Generate questions
+            const ops = op === 'all' ? ['add', 'subtract', 'multiply', 'divide'] : [op];
+            for (let i = 0; i < count; i++) {
+                const randomOp = ops[Math.floor(Math.random() * ops.length)];
+                quizState.questions.push(generateQuestion(randomOp, diff));
+            }
+            
+            document.getElementById('totalQuestions').textContent = count;
+            showSection('quizActive');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = quizState.questions[quizState.currentIdx];
+            document.getElementById('currentQuestion').textContent = quizState.currentIdx + 1;
+            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('progressFill').style.width = `${((quizState.currentIdx) / quizState.totalQuestions) * 100}%`;
+            
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => selectAnswer(opt, btn);
+                optionsGrid.appendChild(btn);
+            });
+            
+            // Start timer
+            clearInterval(quizState.timer);
+            quizState.timeLeft = quizState.totalTime;
+            document.getElementById('timer').textContent = quizState.timeLeft;
+            
+            quizState.timer = setInterval(() => {
+                quizState.timeLeft--;
+                document.getElementById('timer').textContent = quizState.timeLeft;
+                
+                if (quizState.timeLeft <= 0) {
+                    clearInterval(quizState.timer);
+                    selectAnswer(null, null); // Time's up
+                }
+            }, 1000);
+        }
+
+        function selectAnswer(selected, btn) {
+            clearInterval(quizState.timer);
+            const q = quizState.questions[quizState.currentIdx];
+            const isCorrect = selected === q.answer;
+            
+            // Show result
+            document.querySelectorAll('.option-btn').forEach(b => {
+                if (parseInt(b.textContent) === q.answer) {
+                    b.classList.add('correct');
+                } else if (b.classList.contains('wrong') || (selected !== null && b === btn && !isCorrect)) {
+                    b.classList.add('wrong');
+                }
+            });
+            
+            if (isCorrect) quizState.score++;
+            
+            setTimeout(() => {
+                quizState.currentIdx++;
+                
+                if (quizState.currentIdx >= quizState.totalQuestions) {
+                    endQuiz();
+                } else {
+                    showQuestion();
+                }
+            }, isCorrect ? 500 : 1000);
+        }
+
+        function endQuiz() {
+            showSection('quizResult');
+            
+            const totalTime = Math.floor((Date.now() - quizState.startTime) / 1000);
+            const accuracy = Math.round((quizState.score / quizState.totalQuestions) * 100);
+            
+            document.getElementById('finalScore').textContent = `${quizState.score}/${quizState.totalQuestions}`;
+            document.getElementById('finalAccuracy').textContent = `${accuracy}%`;
+            document.getElementById('finalTime').textContent = `${totalTime}s`;
+            
+            // Save to history
+            storage.addQuizHistory({
+                score: quizState.score,
+                total: quizState.totalQuestions,
+                accuracy,
+                time: totalTime,
+                operation: quizState.operation,
+                difficulty: quizState.difficulty
+            });
+            
+            // Emoji based on accuracy
+            let emoji = '😢';
+            if (accuracy >= 80) emoji = '🤩';
+            else if (accuracy >= 60) emoji = '😊';
+            else if (accuracy >= 40) emoji = '🙂';
+            else if (accuracy >= 20) emoji = '😐';
+            document.getElementById('resultEmoji').textContent = emoji;
+            
+            ui.showToast(`Kuis selesai! Skor: ${quizState.score}/${quizState.totalQuestions}`, accuracy >= 60 ? 'success' : 'warning');
+        }
+    </script>
+</body>
+</html>

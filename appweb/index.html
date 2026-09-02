@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Super App</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <svg class="sidebar-logo" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <span class="sidebar-title">Super App</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/index.html" class="nav-item active" data-page="dashboard">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                    Dashboard
+                </a>
+                <a href="/pages/translator.html" class="nav-item" data-page="translator">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7v2H4v2h1.54C6.32 9.36 8.5 11.59 11.5 13.31L8.93 15.87 10.34 17.28l2.53-2.53v.32zM19 13c0 1.93-1.57 3.5-3.5 3.5S12 14.93 12 13s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5zm-2 0c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5z"/></svg>
+                    Penerjemah
+                </a>
+                <a href="/pages/quiz.html" class="nav-item" data-page="quiz">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+                    Kuis Matematika
+                </a>
+                <a href="/pages/password.html" class="nav-item" data-page="password">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    Generator Password
+                </a>
+                <a href="/pages/gacha.html" class="nav-item" data-page="gacha">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5 7.51-3.49L17.5 6.5 9.99 9.99 6.5 17.5zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z"/></svg>
+                    Gacha Keberuntungan
+                </a>
+                <a href="/pages/decision.html" class="nav-item" data-page="decision">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    Rolling Ya/Tidak
+                </a>
+                <a href="/pages/diagram.html" class="nav-item" data-page="diagram">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z"/></svg>
+                    Diagram Kode
+                </a>
+                <a href="/pages/download.html" class="nav-item" data-page="download">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    Downloader Video
+                </a>
+                <a href="/pages/news.html" class="nav-item" data-page="news">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    Berita & Saham
+                </a>
+                <a href="/pages/admin.html" class="nav-item hidden" data-page="admin" id="adminMenu">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                    Admin Dashboard
+                </a>
+                <a href="/pages/settings.html" class="nav-item" data-page="settings">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    Pengaturan
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="flex items-center gap-2">
+                    <button class="btn-icon md:hidden" id="menuToggle">
+                        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                    </button>
+                    <h1 class="header-title">Dashboard</h1>
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn-icon" id="themeToggle" title="Toggle tema">
+                        <svg class="nav-icon" viewBox="0 0 24 24" id="themeIcon">
+                            <path d="M9 21c-4.97 0-9-4.03-9-9s4.03-9 9-9c.83 0 1.64.11 2.41.32C5.09 14.09 6.23 18.17 9 21z"/>
+                        </svg>
+                    </button>
+
+                    <div class="flex items-center gap-1">
+                        <svg class="nav-icon" style="fill: var(--text-secondary)" viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span id="userName" style="font-size: 0.875rem; color: var(--text-secondary)">User</span>
+                    </div>
+
+                    <button class="btn-icon" id="logoutBtn" title="Logout">
+                        <svg class="nav-icon" viewBox="0 0 24 24">
+                            <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div id="dashboardContent">
+                <!-- Stats Grid -->
+                <div class="grid grid-4 mb-2">
+                    <div class="card stats-card">
+                        <div class="stats-icon">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        </div>
+                        <div>
+                            <div class="stats-value" id="statNews">-</div>
+                            <div class="stats-label">Berita Hari Ini</div>
+                        </div>
+                    </div>
+
+                    <div class="card stats-card">
+                        <div class="stats-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981;">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+                        </div>
+                        <div>
+                            <div class="stats-value" id="statStock">-</div>
+                            <div class="stats-label">Saham Aktif</div>
+                        </div>
+                    </div>
+
+                    <div class="card stats-card">
+                        <div class="stats-icon" style="background-color: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+                        </div>
+                        <div>
+                            <div class="stats-value" id="statQuiz">0</div>
+                            <div class="stats-label">Kuis Selesai</div>
+                        </div>
+                    </div>
+
+                    <div class="card stats-card">
+                        <div class="stats-icon" style="background-color: rgba(37, 99, 235, 0.1); color: #2563eb;">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                        </div>
+                        <div>
+                            <div class="stats-value" id="statGacha">0</div>
+                            <div class="stats-label">Gacha Terakhir</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Aksi Cepat</h2>
+                    </div>
+                    <div class="grid grid-4">
+                        <button class="btn btn-secondary" onclick="window.location.href='/pages/translator.html'">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7v2H4v2h1.54C6.32 9.36 8.5 11.59 11.5 13.31L8.93 15.87 10.34 17.28l2.53-2.53v.32z"/></svg>
+                            Terjemahkan
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='/pages/quiz.html'">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Mulai Kuis
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='/pages/password.html'">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
+                            Buat Password
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='/pages/gacha.html'">
+                            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                            Coba Gacha
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Riwayat Kuis</h2>
+                        </div>
+                        <div id="quizHistory">
+                            <p style="color: var(--text-secondary); text-align: center; padding: var(--spacing-lg);">
+                                Belum ada riwayat kuis
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Hasil Gacha Terakhir</h2>
+                        </div>
+                        <div id="gachaHistory">
+                            <p style="color: var(--text-secondary); text-align: center; padding: var(--spacing-lg);">
+                                Belum ada hasil gacha
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/icons.js"></script>
+    <script>
+        // Check authentication
+        if (!auth.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+
+        // Initialize theme
+        const currentTheme = storage.initTheme();
+        updateThemeIcon(currentTheme);
+
+        // Set user info
+        const user = auth.getCurrentUser();
+        if (user) {
+            document.getElementById('userName').textContent = user.username || user.email || 'User';
+            
+            // Show admin menu if admin
+            if (auth.isAdmin()) {
+                document.getElementById('adminMenu').classList.remove('hidden');
+            }
+        }
+
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const newTheme = storage.toggleDarkMode();
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('themeIcon');
+            if (theme === 'dark') {
+                icon.innerHTML = '<path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.79 1.41-1.41-1.79-1.79-1.41 1.41zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/>';
+            } else {
+                icon.innerHTML = '<path d="M9 21c-4.97 0-9-4.03-9-9s4.03-9 9-9c.83 0 1.64.11 2.41.32C5.09 14.09 6.23 18.17 9 21z"/>';
+            }
+        }
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            ui.confirm('Apakah Anda yakin ingin keluar?', 'Logout')
+                .then(confirmed => {
+                    if (confirmed) {
+                        auth.logout();
+                    }
+                });
+        });
+
+        // Load quiz history
+        function loadQuizHistory() {
+            const history = storage.getQuizHistory(5);
+            const container = document.getElementById('quizHistory');
+            
+            if (history.length === 0) {
+                return;
+            }
+
+            container.innerHTML = history.map(item => `
+                <div class="flex justify-between items-center" style="padding: ${getComputedStyle(document.documentElement).getPropertyValue('--spacing-sm')} 0; border-bottom: 1px solid var(--border-color);">
+                    <div>
+                        <div style="font-weight: 500;">${item.score}/${item.total}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">${ui.formatDate(item.timestamp)}</div>
+                    </div>
+                    <div style="font-size: 0.75rem; padding: 2px 8px; background: ${item.accuracy >= 80 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)'}; color: ${item.accuracy >= 80 ? 'var(--success)' : 'var(--warning)'}; border-radius: 12px;">
+                        ${item.accuracy}%
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('statQuiz').textContent = history.length;
+        }
+
+        // Load gacha history
+        function loadGachaHistory() {
+            const results = storage.getGachaResults(5);
+            const container = document.getElementById('gachaHistory');
+            
+            if (results.length === 0) {
+                return;
+            }
+
+            const luckLabels = ['Buruk', 'Biasa', 'Bagus', 'Sangat Bagus', 'Legendaris'];
+            
+            container.innerHTML = results.map(item => `
+                <div class="flex justify-between items-center" style="padding: ${getComputedStyle(document.documentElement).getPropertyValue('--spacing-sm')} 0; border-bottom: 1px solid var(--border-color);">
+                    <div>
+                        <div style="font-weight: 500;">${luckLabels[item.luck] || '-'}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">${ui.formatDate(item.timestamp)}</div>
+                    </div>
+                    <div style="font-size: 1.5rem;">${['😢','😐','🙂','😊','🤩'][item.luck] || '?'}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('statGacha').textContent = results.length;
+        }
+
+        // Load dashboard stats
+        async function loadDashboardStats() {
+            try {
+                // Try to fetch news count
+                const news = await api.get('/api/news', true).catch(() => null);
+                if (news && Array.isArray(news)) {
+                    document.getElementById('statNews').textContent = ui.formatNumber(news.length);
+                }
+
+                // Try to fetch stock data
+                const stocks = await api.get('/api/stocks', true).catch(() => null);
+                if (stocks && Array.isArray(stocks)) {
+                    document.getElementById('statStock').textContent = ui.formatNumber(stocks.length);
+                }
+            } catch (error) {
+                console.log('Dashboard stats loading error:', error);
+            }
+        }
+
+        // Initialize dashboard
+        loadQuizHistory();
+        loadGachaHistory();
+        loadDashboardStats();
+
+        // Mobile menu toggle
+        document.getElementById('menuToggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>
